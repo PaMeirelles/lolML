@@ -29,3 +29,9 @@ def with_elo_recarregando():
 
 def with_elo_and_fill_na():
     return pipeline("data/useful/grouped_data.csv", incorporate_player_data, fill_with_median, elo_diff, standard_scaling)
+
+def with_elo_and_fill_na_no_reload():
+    return pipeline("data/useful/grouped_with_player_data.csv", fill_with_median, elo_diff, standard_scaling)
+
+def for_vif():
+    return pipeline("data/useful/grouped_with_player_data.csv", fill_with_median, elo_diff, preserve_variance_scaling)    

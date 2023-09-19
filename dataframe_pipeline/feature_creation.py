@@ -13,7 +13,16 @@ def date_breaker(df):
 
 def elo_diff(df):
     roles = ["top", "jng", "mid", "bot", "sup"]
+    
+    new_columns = []
     for role in roles:
-        df[f"seq_elo_diff_{role}"] = df[f"avg_seq_elo_{role}_1"] - df[f"avg_seq_elo_{role}_2"]
-        df[f"elo_diff_{role}"] = df[f"avg_elo_{role}_1"] - df[f"avg_elo_{role}_2"]
-    return df
+        seq_elo_diff_col = f"seq_elo_diff_{role}"
+        elo_diff_col = f"elo_diff_{role}"
+        
+        seq_elo_diff_values = df[f"avg_seq_elo_{role}_1"] - df[f"avg_seq_elo_{role}_2"]
+        elo_diff_values = df[f"avg_elo_{role}_1"] - df[f"avg_elo_{role}_2"]
+        
+        new_columns.extend([(seq_elo_diff_col, seq_elo_diff_values), (elo_diff_col, elo_diff_values)])
+    
+    new_df = pd.concat([df] + [pd.DataFrame({col: values for col, values in new_columns})], axis=1)
+    return new_df

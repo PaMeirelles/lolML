@@ -2,27 +2,56 @@ import pandas as pd
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 from tqdm import tqdm
+from dataframe_pipeline.pipeline_storage import for_vif
 
-# Load the DataFrame from the CSV file
-file_path = "data/model_specific/afterVIF.csv"
-df = pd.read_csv(file_path)
+def remove_high_vif_features(df, threshold, removal_percent=0.05):
+    # Prepare the data for VIF calculation
+    X = add_constant(df)
+    vif_data = pd.DataFrame()
+    vif_data["feature"] = X.columns
 
-# Prepare the data for VIF calculation
-X = add_constant(df)
+    while True:
+        # Calculate the VIF values
+        vif_data['VIF'] = variance_inflation_factor(X.values, range(X.shape[1]))
+        vif_data_sorted = vif_data.sort_values(by='VIF', ascending=False)
+        
+        # Check if all VIF values are higher than the threshold
+        if (vif_data_sorted['VIF'] > threshold).all():
+            break
 
-# Calculate the VIF values
-vif_data = pd.DataFrame()
-vif_data["feature"] = X.columns
+        # Calculate the number of features to remove
+        num_to_remove = int(len(vif_data_sorted) * removal_percent)
+        if num_to_remove < 1:
+            num_to_remove = 1
 
-for i in tqdm(range(X.shape[1])):
-    vif_data.loc[i, "VIF"] = variance_inflation_factor(X.values, i)
+        # Get the features to remove
+        features_to_remove = vif_data_sorted.iloc[:num_to_remove]['feature']
 
-vif_data_sorted = vif_data.sort_values(by='VIF', ascending=False)
+        # Remove the features from the DataFrame
+        df = df.drop(columns=features_to_remove)
 
-# Print the top 15
-print("Top 15 VIF values:")
-print(vif_data_sorted.head(15))
+        # Prepare the data for VIF calculation again
+        X = add_constant(df)
+        vif_data = pd.DataFrame()
+        vif_data["feature"] = X.columns
 
-# Print the bottom 15
-print("\nBottom 15 VIF values:")
-print(vif_data_sorted.tail(15))
+        print(f"Removed {num_to_remove} features with highest VIF values")
+
+    return df
+
+df = for_vif()
+
+
+# Define the threshold value
+threshold = 10
+
+num_columns = len(df.columns)
+num_columns_to_select = num_columns // 50
+
+# Select the first 1/8 of columns
+selected_columns = df.iloc[:, :num_columns_to_select]
+
+df = df[[selected_columns]]
+
+# Call the function
+new_df = remove_high_vif_features(df, threshold)
