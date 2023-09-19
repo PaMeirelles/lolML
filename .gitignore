@@ -1,0 +1,5 @@
+# Ignore all CSV files
+*.csv
+
+# Except those inside data/raw_data
+!data/raw_data/*.csv
