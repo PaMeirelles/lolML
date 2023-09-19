@@ -17,3 +17,5 @@ def merge_csv_files(input_folder, output_file):
     merged_data.to_csv(output_file, index=False)
 
     print(f'Merged data saved to {output_file}')
+
+merge_csv_files("data/raw_data", "data/useful/merged_data.csv")

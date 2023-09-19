@@ -2,7 +2,7 @@ import pandas as pd
 from tqdm import tqdm
 
 def get_grouped_by_match():
-    df = pd.read_csv("merged_data.csv")
+    df = pd.read_csv("data/useful/merged_data.csv")
     rows = []
 
     for _, grouped in tqdm(df.groupby("gameid"), total=len(df["gameid"].unique())):
@@ -27,4 +27,6 @@ def get_grouped_by_match():
         rows.append(values)
 
     new_df = pd.DataFrame(rows) 
-    new_df.to_csv("grouped_data.csv")
+    new_df.to_csv("data/useful/grouped_data.csv")
+
+get_grouped_by_match()
