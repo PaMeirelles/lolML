@@ -39,7 +39,7 @@ def plot_na_values(csv_file):
 
 def create_elos_for_human():
     # Load datasets
-    elos = pd.read_csv('data/useful/sequential_elos.csv')
+    elos = pd.read_csv('data/useful/elos.csv')
     alias = pd.read_csv('data/useful/alias.csv')
 
     # Merge the two datasets on 'playerid'
@@ -54,6 +54,7 @@ def create_elos_for_human():
     # Save the resulting DataFrame to a new CSV file
     elos_for_human.to_csv('data/useful/elos_for_human.csv', index=False)
 
+plot_na_values("data/useful/merged_data.csv")
 
 
 create_elos_for_human()
