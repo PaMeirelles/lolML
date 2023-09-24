@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from dataframe_pipeline.pipeline_storage import after_variance, after_vif, apenas_basico, apenas_basico_recarregando, with_elo_and_fill_na, with_elo_recarregando
 
 # Load data
-df = with_elo_recarregando()
+df = with_elo_and_fill_na()
 print(df)
 
 # Assuming 'result' is the target variable and it's binary (0 or 1)
@@ -14,6 +14,7 @@ y = df['result']  # Target
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 
 # Train model
 model = LogisticRegression()
